@@ -1,0 +1,81 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PIXEL EMPIRE</title>
+<style>
+body {
+  margin: 0;
+  background: #080b12;
+  color: white;
+  font-family: Arial, sans-serif;
+  text-align: center;
+}
+header { padding: 35px 10px; }
+h1 { color: #62e6ff; font-size: 42px; }
+p { color: #aab6ca; }
+.stats { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
+.stat { background: #141c2c; padding: 15px; border-radius: 10px; }
+#viewport {
+  height: 55vh;
+  overflow: auto;
+  margin: 20px;
+  background: #03060a;
+  border: 1px solid #26374b;
+}
+#pixels {
+  display: grid;
+  grid-template-columns: repeat(100, 8px);
+  gap: 1px;
+  padding: 8px;
+  width: max-content;
+}
+.pixel {
+  width: 8px;
+  height: 8px;
+  background: #182437;
+  cursor: pointer;
+}
+.pixel:hover { background: #62e6ff; }
+button {
+  padding: 10px 15px;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>PIXEL EMPIRE</h1>
+  <p>Build your place in history.</p>
+  <div class="stats">
+    <div class="stat">Total pixel<br><b>100.000</b></div>
+    <div class="stat">Tersedia<br><b id="available">100.000</b></div>
+    <div class="stat">Terjual<br><b id="sold">0</b></div>
+  </div>
+</header>
+<button onclick="zoom(1.5)">Perbesar +</button>
+<button onclick="zoom(1/1.5)">Perkecil −</button>
+<div id="viewport"><div id="pixels"></div></div>
+<p>Demo awal — pembelian pixel belum aktif.</p>
+<script>
+const grid = document.getElementById("pixels");
+for (let i = 1; i <= 100000; i++) {
+  const pixel = document.createElement("div");
+  pixel.className = "pixel";
+  pixel.title = "Pixel #" + i;
+  pixel.onclick = () =>
+    alert("Pixel #" + i + " masih tersedia.");
+  grid.appendChild(pixel);
+}
+let scale = 1;
+function zoom(factor) {
+  scale = Math.max(.5, Math.min(4, scale * factor));
+  grid.style.zoom = scale;
+}
+</script>
+</body>
+</html>
