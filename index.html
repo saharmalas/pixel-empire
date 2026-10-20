@@ -2,80 +2,383 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>PIXEL EMPIRE</title>
-<style>
-body {
-  margin: 0;
-  background: #080b12;
-  color: white;
-  font-family: Arial, sans-serif;
-  text-align: center;
-}
-header { padding: 35px 10px; }
-h1 { color: #62e6ff; font-size: 42px; }
-p { color: #aab6ca; }
-.stats { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
-.stat { background: #141c2c; padding: 15px; border-radius: 10px; }
-#viewport {
-  height: 55vh;
-  overflow: auto;
-  margin: 20px;
-  background: #03060a;
-  border: 1px solid #26374b;
-}
-#pixels {
-  display: grid;
-  grid-template-columns: repeat(100, 8px);
-  gap: 1px;
-  padding: 8px;
-  width: max-content;
-}
-.pixel {
-  width: 8px;
-  height: 8px;
-  background: #182437;
-  cursor: pointer;
-}
-.pixel:hover { background: #62e6ff; }
-button {
-  padding: 10px 15px;
-  border: 0;
-  border-radius: 8px;
-  cursor: pointer;
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#090b18">
+  <title>PIXEL EMPIRE</title>
+
+  <style>
+    :root {
+      --bg: #090b18;
+      --panel: #12172b;
+      --purple: #9b75ff;
+      --cyan: #56e8e0;
+      --gold: #ffcf70;
+      --white: #f4f3ff;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--white);
+      background:
+        radial-gradient(ellipse at 50% 35%, #20244c 0%, transparent 52%),
+        var(--bg);
+      font-family: "Courier New", monospace;
+      overflow-x: hidden;
+    }
+
+    .stars {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 0;
+    }
+
+    .star {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      background: #fff;
+      box-shadow: 0 0 8px #a9a9ff;
+      animation: blink 2s steps(2, end) infinite alternate;
+    }
+
+    @keyframes blink {
+      from { opacity: .2; }
+      to { opacity: 1; }
+    }
+
+    header, main, footer {
+      position: relative;
+      z-index: 1;
+    }
+
+    header {
+      padding: 23px 7%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 3px solid #292b51;
+      background: #090b18d9;
+    }
+
+    .logo {
+      color: var(--cyan);
+      font-weight: 900;
+      letter-spacing: 2px;
+      text-shadow: 3px 3px 0 #493b8a;
+    }
+
+    .status {
+      color: var(--gold);
+      font-size: 11px;
+    }
+
+    main {
+      width: min(1000px, 90%);
+      margin: auto;
+      padding: 75px 0 60px;
+      text-align: center;
+    }
+
+    .eyebrow {
+      color: var(--cyan);
+      font-size: 12px;
+      letter-spacing: 4px;
+    }
+
+    h1 {
+      margin: 22px 0;
+      font-size: clamp(38px, 8vw, 76px);
+      line-height: 1.05;
+      font-weight: 900;
+      letter-spacing: -3px;
+      color: var(--gold);
+      text-shadow:
+        4px 4px 0 #7547bc,
+        8px 8px 0 #251e51;
+    }
+
+    .subtitle {
+      max-width: 540px;
+      margin: 0 auto;
+      color: #c4c9e9;
+      line-height: 1.9;
+      font-size: 14px;
+    }
+
+    .world {
+      margin: 45px auto 30px;
+      padding: 25px 12px;
+      max-width: 690px;
+      min-height: 200px;
+      background: linear-gradient(#171b38aa, #0b1024dd);
+      border: 4px solid #343965;
+      box-shadow: 8px 8px 0 #050610;
+    }
+
+    .world-label {
+      color: #a8b4e8;
+      font-size: 11px;
+      margin-bottom: 20px;
+    }
+
+    #city {
+      min-height: 90px;
+      display: flex;
+      align-items: end;
+      justify-content: center;
+      gap: 5px;
+      flex-wrap: wrap;
+      padding: 0 10px;
+    }
+
+    .building {
+      width: 24px;
+      background: var(--purple);
+      border: 3px solid #3d326b;
+      box-shadow: inset -5px -5px 0 #654bc1;
+      animation: rise .35s steps(4, end) both;
+    }
+
+    .building:nth-child(3n) {
+      background: var(--cyan);
+      box-shadow: inset -5px -5px 0 #248d98;
+    }
+
+    .building:nth-child(4n) {
+      background: var(--gold);
+      box-shadow: inset -5px -5px 0 #ba783b;
+    }
+
+    @keyframes rise {
+      from { transform: translateY(12px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .ground {
+      width: 85%;
+      height: 8px;
+      margin: 0 auto;
+      background: #56e8e0;
+      box-shadow: 0 5px 0 #277982;
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin: 28px 0;
+    }
+
+    button {
+      padding: 15px 21px;
+      border: 3px solid #fff;
+      font-family: inherit;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 5px 5px 0 #000;
+      transition: transform .12s, box-shadow .12s;
+    }
+
+    button:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 7px 7px 0 #000;
+    }
+
+    button:active {
+      transform: translate(3px, 3px);
+      box-shadow: 2px 2px 0 #000;
+    }
+
+    .primary {
+      color: #131126;
+      background: var(--gold);
+    }
+
+    .secondary {
+      color: var(--white);
+      background: #24284b;
+    }
+
+    #message {
+      min-height: 25px;
+      color: var(--cyan);
+      font-size: 12px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 42px;
+    }
+
+    .stat {
+      padding: 19px 8px;
+      border: 3px solid #292e55;
+      background: #11162a;
+    }
+
+    .stat strong {
+      display: block;
+      color: var(--gold);
+      font-size: 23px;
+      margin-bottom: 8px;
+    }
+
+    .stat span {
+      color: #aab2d5;
+      font-size: 10px;
+    }
+
+    footer {
+      padding: 23px;
+      text-align: center;
+      border-top: 3px solid #292b51;
+      color: #8d96bd;
+      font-size: 10px;
+      line-height: 2;
+    }
+
+    @media (max-width: 520px) {
+      header { padding: 18px 5%; }
+      .logo { font-size: 12px; }
+      .status { font-size: 9px; }
+      main { padding-top: 55px; }
+      .stats { gap: 6px; }
+      .stat strong { font-size: 18px; }
+      h1 { letter-spacing: -2px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .01ms !important;
+        transition-duration: .01ms !important;
+      }
+    }
+  </style>
 </head>
+
 <body>
-<header>
-  <h1>PIXEL EMPIRE</h1>
-  <p>Build your place in history.</p>
-  <div class="stats">
-    <div class="stat">Total pixel<br><b>100.000</b></div>
-    <div class="stat">Tersedia<br><b id="available">100.000</b></div>
-    <div class="stat">Terjual<br><b id="sold">0</b></div>
-  </div>
-</header>
-<button onclick="zoom(1.5)">Perbesar +</button>
-<button onclick="zoom(1/1.5)">Perkecil −</button>
-<div id="viewport"><div id="pixels"></div></div>
-<p>Demo awal — pembelian pixel belum aktif.</p>
-<script>
-const grid = document.getElementById("pixels");
-for (let i = 1; i <= 100000; i++) {
-  const pixel = document.createElement("div");
-  pixel.className = "pixel";
-  pixel.title = "Pixel #" + i;
-  pixel.onclick = () =>
-    alert("Pixel #" + i + " masih tersedia.");
-  grid.appendChild(pixel);
-}
-let scale = 1;
-function zoom(factor) {
-  scale = Math.max(.5, Math.min(4, scale * factor));
-  grid.style.zoom = scale;
-}
-</script>
+  <div class="stars" id="stars" aria-hidden="true"></div>
+
+  <header>
+    <div class="logo">■ PIXEL EMPIRE</div>
+    <div class="status">● WORLD STATUS: ONLINE</div>
+  </header>
+
+  <main>
+    <div class="eyebrow">WELCOME TO YOUR WORLD</div>
+    <h1>PIXEL<br>EMPIRE</h1>
+
+    <p class="subtitle">
+      Setiap piksel adalah awal dari sebuah dunia.
+      Bangun kerajaanmu, ciptakan sejarahmu,
+      dan jadikan imajinasimu sebuah legenda.
+    </p>
+
+    <section class="world" aria-label="Pixel city builder">
+      <div class="world-label">YOUR KINGDOM // PIXEL GENERATOR</div>
+      <div id="city" aria-live="polite"></div>
+      <div class="ground"></div>
+    </section>
+
+    <div class="actions">
+      <button class="primary" id="build">▶ BUILD EMPIRE</button>
+      <button class="secondary" id="reset">↻ RESET WORLD</button>
+    </div>
+
+    <p id="message" aria-live="polite">Dunia baru menunggu penciptanya...</p>
+
+    <section class="stats" aria-label="World statistics">
+      <div class="stat">
+        <strong id="pixels">000</strong>
+        <span>PIXELS CREATED</span>
+      </div>
+      <div class="stat">
+        <strong id="buildings">00</strong>
+        <span>BUILDINGS</span>
+      </div>
+      <div class="stat">
+        <strong id="level">01</strong>
+        <span>EMPIRE LEVEL</span>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    PIXEL EMPIRE © 2026<br>
+    BUILT FROM IMAGINATION, ONE PIXEL AT A TIME.
+  </footer>
+
+  <script>
+    const city = document.getElementById("city");
+    const message = document.getElementById("message");
+    const pixels = document.getElementById("pixels");
+    const buildings = document.getElementById("buildings");
+    const level = document.getElementById("level");
+    const buildButton = document.getElementById("build");
+    const resetButton = document.getElementById("reset");
+
+    let total = 0;
+
+    // Create decorative stars.
+    const starLayer = document.getElementById("stars");
+    for (let i = 0; i < 75; i++) {
+      const star = document.createElement("span");
+      star.className = "star";
+      star.style.left = Math.random() * 100 + "%";
+      star.style.top = Math.random() * 100 + "%";
+      star.style.animationDelay = Math.random() * 3 + "s";
+      starLayer.appendChild(star);
+    }
+
+    function buildEmpire() {
+      if (total >= 40) {
+        message.textContent =
+          "EMPIRE COMPLETE! Your pixel kingdom is thriving.";
+        return;
+      }
+
+      const count = Math.min(5, 40 - total);
+
+      for (let i = 0; i < count; i++) {
+        const building = document.createElement("div");
+        building.className = "building";
+        building.style.height =
+          (25 + Math.floor(Math.random() * 65)) + "px";
+        building.style.animationDelay = (i * 0.06) + "s";
+        city.appendChild(building);
+      }
+
+      total += count;
+      pixels.textContent = String(total * 16).padStart(3, "0");
+      buildings.textContent = String(total).padStart(2, "0");
+      level.textContent = String(Math.min(10, 1 +
+        Math.floor(total / 5))).padStart(2, "0");
+
+      message.textContent = total >= 40
+        ? "EMPIRE COMPLETE! Your pixel kingdom is thriving."
+        : "Empire expanded! Keep building your world.";
+    }
+
+    function resetWorld() {
+      total = 0;
+      city.replaceChildren();
+      pixels.textContent = "000";
+      buildings.textContent = "00";
+      level.textContent = "01";
+      message.textContent = "Dunia baru menunggu penciptanya...";
+    }
+
+    buildButton.addEventListener("click", buildEmpire);
+    resetButton.addEventListener("click", resetWorld);
+  </script>
 </body>
 </html>
